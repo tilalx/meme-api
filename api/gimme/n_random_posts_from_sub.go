@@ -33,6 +33,14 @@ func GetNPostsFromSub(c *gin.Context) {
 		return
 	}
 
+	if !isValidSubreddit(sub) {
+		c.JSON(http.StatusBadRequest, response.Error{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid subreddit name",
+		})
+		return
+	}
+
 	// Check if the count is less than 50
 	if count > 50 {
 		count = 50

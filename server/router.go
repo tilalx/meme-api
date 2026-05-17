@@ -1,6 +1,7 @@
 package server
 
 import (
+	"Meme_Api/api"
 	"Meme_Api/api/gimme"
 
 	"github.com/gin-contrib/cors"
@@ -15,6 +16,9 @@ func NewRouter() *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 	router.Use(cors.Default())
+
+	// API docs
+	router.GET("/", api.GetDocs)
 
 	// /gimme routes
 	gimmeRouter := router.Group("gimme")

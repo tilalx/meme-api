@@ -2,13 +2,19 @@ package reddit
 
 import (
 	"encoding/base64"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/getsentry/sentry-go"
 )
+
+// httpClient is a shared HTTP client with a timeout to prevent resource exhaustion.
+var httpClient = &http.Client{
+	Timeout: 10 * time.Second,
+}
 
 // EncodeCredentials : Return base64 Encoded client ID and Secret required for authentication
 func EncodeCredentials() (encodedCredentials string) {
@@ -29,18 +35,16 @@ func MakeGetRequest(url string) (responseBody []byte, errorCode int) {
 	req.Header.Add("Connection", "keep-alive")
 	req.Header.Add("cache-control", "no-cache")
 
-	res, err := http.DefaultClient.Do(req)
+	res, err := httpClient.Do(req)
 
 	if err != nil {
 		sentry.CaptureException(err)
 		log.Println("Error while making request", err)
-		return nil, res.StatusCode
+		return nil, http.StatusInternalServerError
 	}
-	// Close the response body
 	defer res.Body.Close()
 
-	// Read the response
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 
 	if err != nil {
 		sentry.CaptureException(err)

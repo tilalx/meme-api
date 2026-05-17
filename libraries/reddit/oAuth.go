@@ -2,7 +2,7 @@ package reddit
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strings"
@@ -44,7 +44,7 @@ func GetAccessToken() (accessToken string) {
 	req.Header.Add("cache-control", "no-cache")
 
 	// Make Request
-	res, err := http.DefaultClient.Do(req)
+	res, err := httpClient.Do(req)
 
 	if err != nil {
 		sentry.CaptureException(err)
@@ -56,7 +56,7 @@ func GetAccessToken() (accessToken string) {
 	defer res.Body.Close()
 
 	// Read the response
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 
 	if err != nil {
 		sentry.CaptureException(err)

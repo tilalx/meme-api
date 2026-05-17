@@ -21,6 +21,14 @@ func GetOnePostFromSub(c *gin.Context) {
 
 	sub := strings.ToLower(c.Param("interface"))
 
+	if !isValidSubreddit(sub) {
+		c.JSON(http.StatusBadRequest, response.Error{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid subreddit name",
+		})
+		return
+	}
+
 	// Check if the sub is present in the cache
 	memes := redis.GetPostsFromCache(sub)
 

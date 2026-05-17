@@ -1,16 +1,8 @@
 # Meme API
 
-⚠️ Heroku has discontinued support for free Dynos, so the old Domain `meme-api.herokuapp.com` has stopped working ⚠️
-
-Please update your apps to the new Domain `meme-api.com` to continue using the API
-
-[![CodeFactor](https://www.codefactor.io/repository/github/d3vd/meme_api/badge)](https://www.codefactor.io/repository/github/d3vd/meme_api)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/8df2a02ea3294423adc74bbf0a13356e)](https://www.codacy.com/gh/D3vd/Meme_Api/dashboard?utm_source=github.com&utm_medium=referral&utm_content=D3vd/Meme_Api&utm_campaign=Badge_Grade)
-[![DeepSource](https://deepsource.io/gh/D3vd/Meme_Api.svg/?label=active+issues&show_trend=true)](https://deepsource.io/gh/D3vd/Meme_Api/?ref=repository-badge)
-
 JSON API for a random meme scraped from reddit.
 
-API Link : [https://meme-api.com/gimme](https://meme-api.com/gimme)
+API Link : [https://meme-api.aelx.de/gimme](https://meme-api.aelx.de/gimme)
 
 **Example Response:**
 
@@ -41,9 +33,9 @@ API Link : [https://meme-api.com/gimme](https://meme-api.com/gimme)
 
 In order to get multiple memes in a single request specify the count with the following endpoint.
 
-Endpoint: [/gimme/{count}](https://meme-api.com/gimme/2)
+Endpoint: [/gimme/{count}](https://meme-api.aelx.de/gimme/2)
 
-Example: [https://meme-api.com/gimme/2](https://meme-api.com/gimme/2)
+Example: [https://meme-api.aelx.de/gimme/2](https://meme-api.aelx.de/gimme/2)
 
 Response:
 
@@ -90,9 +82,9 @@ Response:
 
 By default the API grabs a random meme from '_memes_', '_dankmemes_', '_me_irl_' subreddits. To provide your own custom subreddit use the following endpoint.
 
-Endpoint: [/gimme/{subreddit}](https://meme-api.com/gimme/wholesomememes)
+Endpoint: [/gimme/{subreddit}](https://meme-api.aelx.de/gimme/wholesomememes)
 
-Example: [https://meme-api.com/gimme/wholesomememes](https://meme-api.com/gimme/wholesomememes)
+Example: [https://meme-api.aelx.de/gimme/wholesomememes](https://meme-api.aelx.de/gimme/wholesomememes)
 
 Response:
 
@@ -119,9 +111,9 @@ Response:
 
 In order to get a custom number of memes from a specific subreddit provide the name of the subreddit and the count in the following endpoint.
 
-Endpoint: [/gimme/{subreddit}/{count}](https://meme-api.com/gimme/wholesomememes/2)
+Endpoint: [/gimme/{subreddit}/{count}](https://meme-api.aelx.de/gimme/wholesomememes/2)
 
-Example: [https://meme-api.com/gimme/wholesomememes/2](https://meme-api.com/gimme/wholesomememes/2)
+Example: [https://meme-api.aelx.de/gimme/wholesomememes/2](https://meme-api.aelx.de/gimme/wholesomememes/2)
 
 Response:
 
