@@ -2,7 +2,7 @@ package reddit
 
 import (
 	"encoding/json"
-	"log"
+	"log/slog"
 	"net/http"
 
 	rm "Meme_Api/libraries/reddit/models"
@@ -11,10 +11,10 @@ import (
 	"github.com/getsentry/sentry-go"
 )
 
-// GetNPosts : Get (N) no. of posts from Reddit with Subreddit Name and Limit
-func GetNPosts(subreddit string, count int) ([]models.Meme, rm.CustomRedditError) {
+// GetNPosts : Get (N) no. of posts from Reddit with Subreddit Name, Limit and Sort order
+func GetNPosts(subreddit string, count int, sort string) ([]models.Meme, rm.CustomRedditError) {
 
-	url := GetSubredditAPIURL(subreddit, count)
+	url := GetSubredditAPIURL(subreddit, count, sort)
 
 	body, statusCode := MakeGetRequest(url)
 
@@ -71,7 +71,7 @@ func GetNPosts(subreddit string, count int) ([]models.Meme, rm.CustomRedditError
 
 	if err := json.Unmarshal(body, &redditResponse); err != nil {
 		sentry.CaptureException(err)
-		log.Println("Error while Parsing Reddit Response")
+		slog.Error("error parsing Reddit response", "error", err)
 
 		res := rm.CustomRedditError{
 			Code:    http.StatusInternalServerError,

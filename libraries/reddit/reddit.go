@@ -1,8 +1,9 @@
 package reddit
 
 import (
-	"log"
+	"log/slog"
 	"os"
+	"sync"
 )
 
 // Reddit : Reddit structure with reddit credentials
@@ -11,6 +12,8 @@ var (
 	ClientID     string
 	ClientSecret string
 	UserAgent    string
+
+	tokenMu sync.RWMutex
 )
 
 // Init : Initialize the Reddit Structure with App Credentials
@@ -20,8 +23,8 @@ func Init() {
 	clientSecret := os.Getenv("REDDIT_CLIENT_SECRET")
 
 	if clientID == "" || clientSecret == "" {
-		log.Fatalln("Reddit Client ID and Secret have not been set")
-		return
+		slog.Error("REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET must be set")
+		os.Exit(1)
 	}
 
 	ClientID = clientID
@@ -32,11 +35,13 @@ func Init() {
 	accessToken := GetAccessToken()
 
 	if accessToken == "" {
-		log.Fatalln("Error while getting Access Token")
-		return
+		slog.Error("failed to obtain Reddit access token at startup")
+		os.Exit(1)
 	}
 
+	tokenMu.Lock()
 	AccessToken = accessToken
+	tokenMu.Unlock()
 }
 
 // GetNewAccessToken : Function to Generate New Access Token once the old one expires
@@ -44,10 +49,12 @@ func GetNewAccessToken() (ok bool) {
 	newAccessToken := GetAccessToken()
 
 	if newAccessToken == "" {
-		log.Println("Unable to get new Access Token")
+		slog.Warn("unable to refresh Reddit access token")
 		return false
 	}
 
+	tokenMu.Lock()
 	AccessToken = newAccessToken
+	tokenMu.Unlock()
 	return true
 }

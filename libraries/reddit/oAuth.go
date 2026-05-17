@@ -3,7 +3,7 @@ package reddit
 import (
 	"encoding/json"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -27,7 +27,7 @@ func GetAccessToken() (accessToken string) {
 
 	if err != nil {
 		sentry.CaptureException(err)
-		log.Println("Error while Creating Request")
+		slog.Error("error creating Reddit auth request", "error", err)
 		return ""
 	}
 
@@ -38,17 +38,14 @@ func GetAccessToken() (accessToken string) {
 	req.Header.Add("Cache-Control", "no-cache")
 	req.Header.Add("Host", "www.reddit.com")
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	// req.Header.Add("Accept-Encoding", "gzip, deflate")
-	req.Header.Add("Content-Length", "29")
 	req.Header.Add("Connection", "keep-alive")
-	req.Header.Add("cache-control", "no-cache")
 
 	// Make Request
 	res, err := httpClient.Do(req)
 
 	if err != nil {
 		sentry.CaptureException(err)
-		log.Println("Error while making connecting to : " + url)
+		slog.Error("error connecting to Reddit auth endpoint", "url", url, "error", err)
 		return ""
 	}
 
@@ -60,16 +57,15 @@ func GetAccessToken() (accessToken string) {
 
 	if err != nil {
 		sentry.CaptureException(err)
-		log.Println("Error while reading response body", err)
+		slog.Error("error reading Reddit auth response body", "error", err)
 		return ""
 	}
 
 	var accessTokenBody rm.AccessTokenBody
 
 	if err := json.Unmarshal(body, &accessTokenBody); err != nil {
-		log.Println(string(body))
+		slog.Error("error parsing Reddit access token response", "error", err)
 		sentry.CaptureException(err)
-		log.Println("Error while Unmarshalling AccessTokenBody", err)
 		return ""
 	}
 

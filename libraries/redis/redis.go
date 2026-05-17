@@ -1,7 +1,7 @@
 package redis
 
 import (
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/go-redis/redis"
@@ -13,26 +13,29 @@ var (
 	Client   *redis.Client
 )
 
-// Init : Initialize New Redis Connection
+// Init : Initialize New Redis Connection (optional — app runs without caching if URL is unset)
 func Init() {
 	redisURL := os.Getenv("REDISCLOUD_URL")
 
 	if redisURL == "" {
-		log.Fatalln("Redis Cloud URL has been set")
+		slog.Warn("REDISCLOUD_URL not set — running without Redis cache")
 		return
 	}
 
 	options, err := redis.ParseURL(redisURL)
 
 	if err != nil {
-		log.Fatalln("Invalid Redis Cloud URL. Unable to Parse")
+		slog.Warn("invalid Redis URL, skipping Redis", "error", err)
+		return
 	}
 
 	redisClient := redis.NewClient(options)
 
 	if redisClient.Ping().String() != "ping: PONG" {
-		log.Fatalln("Error while contacting Redis DB. Please check the Redis Cloud URL.")
+		slog.Warn("unable to reach Redis — running without cache")
+		return
 	}
 
 	Client = redisClient
+	slog.Info("Redis connected successfully")
 }

@@ -3,7 +3,7 @@ package reddit
 import (
 	"encoding/base64"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"time"
@@ -27,19 +27,22 @@ func EncodeCredentials() (encodedCredentials string) {
 func MakeGetRequest(url string) (responseBody []byte, errorCode int) {
 	req, _ := http.NewRequest("GET", url, nil)
 
-	req.Header.Add("Authorization", "Bearer "+AccessToken)
+	tokenMu.RLock()
+	token := AccessToken
+	tokenMu.RUnlock()
+
+	req.Header.Add("Authorization", "Bearer "+token)
 	req.Header.Add("User-Agent", UserAgent)
 	req.Header.Add("Accept", "*/*")
 	req.Header.Add("Cache-Control", "no-cache")
 	req.Header.Add("Host", "oauth.reddit.com")
 	req.Header.Add("Connection", "keep-alive")
-	req.Header.Add("cache-control", "no-cache")
 
 	res, err := httpClient.Do(req)
 
 	if err != nil {
 		sentry.CaptureException(err)
-		log.Println("Error while making request", err)
+		slog.Error("error making Reddit API request", "url", url, "error", err)
 		return nil, http.StatusInternalServerError
 	}
 	defer res.Body.Close()
@@ -48,15 +51,27 @@ func MakeGetRequest(url string) (responseBody []byte, errorCode int) {
 
 	if err != nil {
 		sentry.CaptureException(err)
-		log.Println("Error while Parsing Response Body")
+		slog.Error("error reading Reddit API response body", "error", err)
 		return nil, res.StatusCode
 	}
 
 	return body, res.StatusCode
 }
 
-// GetSubredditAPIURL : Returns API Reddit URL with Limit
-func GetSubredditAPIURL(subreddit string, limit int) (url string) {
-	url = "https://oauth.reddit.com/r/" + subreddit + "/hot?limit=" + strconv.Itoa(limit)
+// validSorts is the set of Reddit sort modes accepted by the API.
+var validSorts = map[string]bool{
+	"hot":           true,
+	"new":           true,
+	"top":           true,
+	"rising":        true,
+	"controversial": true,
+}
+
+// GetSubredditAPIURL : Returns API Reddit URL for a subreddit with limit and sort order
+func GetSubredditAPIURL(subreddit string, limit int, sort string) (url string) {
+	if !validSorts[sort] {
+		sort = "hot"
+	}
+	url = "https://oauth.reddit.com/r/" + subreddit + "/" + sort + "?limit=" + strconv.Itoa(limit)
 	return
 }

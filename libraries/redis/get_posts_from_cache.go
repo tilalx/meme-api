@@ -9,6 +9,10 @@ import (
 // GetPostsFromCache : Get memes from Cache based on sub
 func GetPostsFromCache(sub string) []models.Meme {
 
+	if Client == nil {
+		return nil
+	}
+
 	memesBinary, err := Client.Get(sub).Bytes()
 
 	if err != nil {

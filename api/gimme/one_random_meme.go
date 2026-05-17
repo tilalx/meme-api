@@ -16,6 +16,8 @@ import (
 // GetOneRandomMeme : Returns a single meme from a random subreddit
 func GetOneRandomMeme(c *gin.Context) {
 
+	sort := c.DefaultQuery("sort", "hot")
+
 	// Choose Random Meme Subreddit
 	sub := data.MemeSubreddits[utils.GetRandomN(len(data.MemeSubreddits))]
 
@@ -24,43 +26,36 @@ func GetOneRandomMeme(c *gin.Context) {
 
 	// If it is not in Cache then get posts from Reddit
 	if memes == nil {
-		// Get 50 posts from that Subreddit
-		freshMemes, res := reddit.GetNPosts(sub, data.RedditPostsLimit)
+		freshMemes, res := reddit.GetNPosts(sub, data.RedditPostsLimit, sort)
 
-		// Check if memes is nil because of error
 		if freshMemes == nil {
-
 			c.JSON(res.Code, res)
 			return
 		}
 
-		// Remove Non Image posts from the Array
 		freshMemes = utils.RemoveNonImagePosts(freshMemes)
 
-		// Write sub posts to Cache
 		if err := redis.WritePostsToCache(sub, freshMemes); err != nil {
 			sentry.CaptureException(err)
 		}
 
-		// Set Memes to Fresh Memes
 		memes = freshMemes
 	}
 
-	// Check if the Memes list has any posts
-	if len(memes) == 0 {
-		res := response.Error{
-			Code:    http.StatusInternalServerError,
-			Message: "Error while getting Memes",
-		}
+	memes = utils.ApplyFilters(memes, c)
 
-		c.JSON(http.StatusInternalServerError, res)
+	if len(memes) == 0 {
+		c.JSON(http.StatusNotFound, response.Error{
+			Code:    http.StatusNotFound,
+			Message: "No memes found matching the requested filters",
+		})
 		return
 	}
 
-	// Choose one post from the list
-	meme := memes[utils.GetRandomN(len(memes))]
+	idx := redis.NextIndex(sub)
+	meme := utils.PickMemeAt(memes, idx)
 
-	res := response.OneMeme{
+	c.JSON(http.StatusOK, response.OneMeme{
 		PostLink:  meme.PostLink,
 		Subreddit: meme.SubReddit,
 		Title:     meme.Title,
@@ -70,7 +65,5 @@ func GetOneRandomMeme(c *gin.Context) {
 		Author:    meme.Author,
 		Ups:       meme.Ups,
 		Preview:   meme.Preview,
-	}
-
-	c.JSON(http.StatusOK, res)
+	})
 }
