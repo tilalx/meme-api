@@ -3,12 +3,13 @@ package server
 import (
 	"net/http"
 
-	"Meme_Api/api"
 	"Meme_Api/api/gimme"
 	"Meme_Api/server/middleware"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // NewRouter : Function with routes
@@ -28,8 +29,11 @@ func NewRouter() *gin.Engine {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
 
-	// API docs
-	router.GET("/", api.GetDocs)
+	// Swagger UI (assets embedded, no CDN)
+	router.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
+	})
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// /gimme routes
 	gimmeRouter := router.Group("gimme")

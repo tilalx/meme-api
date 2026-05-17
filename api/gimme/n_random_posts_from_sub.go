@@ -17,7 +17,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetNPostsFromSub : Get N no. of posts from a specific subreddit
+// GetNPostsFromSub returns N memes from a specific subreddit.
+//
+// @Summary      Get N random memes from a subreddit
+// @Description  Returns up to 50 random memes from the specified subreddit.
+// @Tags         memes
+// @Produce      json
+// @Param        subreddit  path     string  true   "Subreddit name (alphanumeric + underscores, max 50 chars)"
+// @Param        count      path     int     true   "Number of memes (1–50)"
+// @Param        sort       query    string  false  "Reddit sort method"  Enums(hot, new, top)  default(hot)
+// @Param        nsfw       query    boolean false  "Include NSFW posts"  default(true)
+// @Param        spoiler    query    boolean false  "Include spoiler posts" default(true)
+// @Success      200  {object}  response.MultipleMemes
+// @Failure      400  {object}  response.Error
+// @Failure      404  {object}  response.Error
+// @Failure      500  {object}  response.Error
+// @Router       /gimme/{subreddit}/{count} [get]
 func GetNPostsFromSub(c *gin.Context) {
 
 	sub := strings.ToLower(c.Param("interface"))

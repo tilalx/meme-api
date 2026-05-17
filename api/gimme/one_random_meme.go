@@ -13,7 +13,19 @@ import (
 	"Meme_Api/utils"
 )
 
-// GetOneRandomMeme : Returns a single meme from a random subreddit
+// GetOneRandomMeme returns a single meme from a random default subreddit.
+//
+// @Summary      Get a random meme
+// @Description  Returns a single random meme from one of the default subreddits (memes, dankmemes, me_irl).
+// @Tags         memes
+// @Produce      json
+// @Param        sort     query    string  false  "Reddit sort method"  Enums(hot, new, top)  default(hot)
+// @Param        nsfw     query    boolean false  "Include NSFW posts"  default(true)
+// @Param        spoiler  query    boolean false  "Include spoiler posts" default(true)
+// @Success      200  {object}  response.OneMeme
+// @Failure      404  {object}  response.Error
+// @Failure      500  {object}  response.Error
+// @Router       /gimme [get]
 func GetOneRandomMeme(c *gin.Context) {
 
 	sort := c.DefaultQuery("sort", "hot")

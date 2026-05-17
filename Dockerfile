@@ -6,7 +6,13 @@ WORKDIR /src/meme-api
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Install swag CLI for doc generation
+RUN go install github.com/swaggo/swag/cmd/swag@v1.16.4
+
 COPY . .
+
+# Generate Swagger docs from handler annotations
+RUN swag init --parseDependency --parseInternal
 
 # Build a fully static binary with debug info stripped
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /app/meme-api

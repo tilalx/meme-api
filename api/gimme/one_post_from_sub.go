@@ -16,7 +16,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetOnePostFromSub : Get one post from a specific subreddit
+// GetOnePostFromSub returns a single meme from a specific subreddit.
+//
+// @Summary      Get a random meme from a subreddit
+// @Description  Returns a single random meme from the specified subreddit.
+// @Tags         memes
+// @Produce      json
+// @Param        subreddit  path     string  true   "Subreddit name (alphanumeric + underscores, max 50 chars)"
+// @Param        sort       query    string  false  "Reddit sort method"  Enums(hot, new, top)  default(hot)
+// @Param        nsfw       query    boolean false  "Include NSFW posts"  default(true)
+// @Param        spoiler    query    boolean false  "Include spoiler posts" default(true)
+// @Success      200  {object}  response.OneMeme
+// @Failure      400  {object}  response.Error
+// @Failure      404  {object}  response.Error
+// @Failure      500  {object}  response.Error
+// @Router       /gimme/{subreddit} [get]
 func GetOnePostFromSub(c *gin.Context) {
 
 	sub := strings.ToLower(c.Param("interface"))

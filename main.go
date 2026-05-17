@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"Meme_Api/config"
+	_ "Meme_Api/docs"
 	"Meme_Api/libraries/reddit"
 	"Meme_Api/libraries/redis"
 	"Meme_Api/server"
@@ -16,6 +17,12 @@ import (
 	"github.com/getsentry/sentry-go"
 )
 
+// @title           Meme API
+// @version         1.0.0
+// @description     A simple, free REST API serving random memes scraped from Reddit.
+// @host            meme-api.aelx.de
+// @BasePath        /
+// @schemes         https
 func main() {
 	// JSON structured logging
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))

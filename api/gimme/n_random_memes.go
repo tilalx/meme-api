@@ -14,7 +14,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetNRandomMemes : Returns N no. of memes from a random subreddit
+// GetNRandomMemes returns N memes from a random default subreddit.
+//
+// @Summary      Get N random memes
+// @Description  Returns up to 50 random memes from one of the default subreddits.
+// @Tags         memes
+// @Produce      json
+// @Param        count    path     int     true   "Number of memes (1–50)"
+// @Param        sort     query    string  false  "Reddit sort method"  Enums(hot, new, top)  default(hot)
+// @Param        nsfw     query    boolean false  "Include NSFW posts"  default(true)
+// @Param        spoiler  query    boolean false  "Include spoiler posts" default(true)
+// @Success      200  {object}  response.MultipleMemes
+// @Failure      400  {object}  response.Error
+// @Failure      404  {object}  response.Error
+// @Failure      500  {object}  response.Error
+// @Router       /gimme/{count} [get]
 func GetNRandomMemes(c *gin.Context) {
 
 	count, _ := strconv.Atoi(c.Param("interface"))
