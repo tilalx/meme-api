@@ -13,6 +13,7 @@ import (
 
 // NewRouter : Function with routes
 func NewRouter() *gin.Engine {
+	gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
 
 	// Gin and CORS Middlewares
