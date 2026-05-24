@@ -18,7 +18,7 @@ RUN swag init --parseDependency --parseInternal
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /app/meme-api
 
 # Final Stage — minimal image, no shell needed at runtime
-FROM alpine:3.21
+FROM alpine:3.23
 
 # Run as non-root for security
 RUN addgroup -S app && adduser -S app -G app
