@@ -5,7 +5,6 @@ pipeline {
         IMAGE_NAME = "tilalx/meme-api"
         DOCKER_BUILDKIT = 1
         PIPELINE_NAME = "${JOB_NAME.replaceAll('/', '_')}-${BUILD_NUMBER}"
-        DOCKER_CLI_EXPERIMENTAL = 'enabled'
     }
 
     options {
@@ -63,7 +62,7 @@ pipeline {
                     }
 
                     sh """
-                        docker buildx build --platform linux/amd64 --provenance=true --sbom=true --build-arg DOCKER_BUILDKIT=${DOCKER_BUILDKIT} --memory 32g --memory-swap 16g ${tags} --push .
+                        docker buildx build --platform linux/amd64 --provenance=true --sbom=true --build-arg DOCKER_BUILDKIT=${DOCKER_BUILDKIT} --memory 32g --memory-swap -1 ${tags} --push .
                     """
                 }
             }

@@ -32,7 +32,7 @@ docker compose up -d
 ```yaml
 services:
   meme-api:
-    image: ghcr.io/tilalx/meme-api:latest
+    image: ghcr.io/tilalx/meme-api:rolling
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -45,7 +45,7 @@ services:
       - redis
 
   redis:
-    image: redis:7-alpine
+    image: redis:8
     restart: unless-stopped
     volumes:
       - redis-data:/data

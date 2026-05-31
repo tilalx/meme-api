@@ -3,30 +3,53 @@ package middleware
 import (
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/time/rate"
 )
 
-// ipLimiter holds a rate limiter for a single IP address.
+// ipLimiter holds a rate limiter and the last time the IP was seen.
 type ipLimiter struct {
-	limiter *rate.Limiter
+	limiter  *rate.Limiter
+	lastSeen time.Time
 }
 
 var (
-	limiters sync.Map
+	mu         sync.Mutex
+	limiters   = make(map[string]*ipLimiter)
 	// Allow 10 requests per second with a burst of 20 per IP.
 	rateLimit  = rate.Limit(10)
 	burstLimit = 20
 )
 
+func init() {
+	// Evict entries that haven't been seen in 10 minutes, every 5 minutes.
+	go func() {
+		ticker := time.NewTicker(5 * time.Minute)
+		defer ticker.Stop()
+		for range ticker.C {
+			mu.Lock()
+			for ip, l := range limiters {
+				if time.Since(l.lastSeen) > 10*time.Minute {
+					delete(limiters, ip)
+				}
+			}
+			mu.Unlock()
+		}
+	}()
+}
+
 func getLimiter(ip string) *rate.Limiter {
-	v, ok := limiters.Load(ip)
+	mu.Lock()
+	defer mu.Unlock()
+	l, ok := limiters[ip]
 	if !ok {
-		l := &ipLimiter{limiter: rate.NewLimiter(rateLimit, burstLimit)}
-		v, _ = limiters.LoadOrStore(ip, l)
+		l = &ipLimiter{limiter: rate.NewLimiter(rateLimit, burstLimit)}
+		limiters[ip] = l
 	}
-	return v.(*ipLimiter).limiter
+	l.lastSeen = time.Now()
+	return l.limiter
 }
 
 // RateLimit returns a gin middleware that limits each client IP to 10 req/s (burst 20).

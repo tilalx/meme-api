@@ -1,6 +1,7 @@
 package reddit
 
 import (
+	"context"
 	"encoding/json"
 	"log/slog"
 	"net/http"
@@ -12,11 +13,11 @@ import (
 )
 
 // GetNPosts : Get (N) no. of posts from Reddit with Subreddit Name, Limit and Sort order
-func GetNPosts(subreddit string, count int, sort string) ([]models.Meme, rm.CustomRedditError) {
+func GetNPosts(ctx context.Context, subreddit string, count int, sort string) ([]models.Meme, rm.CustomRedditError) {
 
 	url := GetSubredditAPIURL(subreddit, count, sort)
 
-	body, statusCode := MakeGetRequest(url)
+	body, statusCode := MakeGetRequest(ctx, url)
 
 	// Check if the access Token has been expired
 	if statusCode == 401 {
@@ -24,7 +25,7 @@ func GetNPosts(subreddit string, count int, sort string) ([]models.Meme, rm.Cust
 		GetNewAccessToken()
 
 		// Make request Again
-		body, statusCode = MakeGetRequest(url)
+		body, statusCode = MakeGetRequest(ctx, url)
 	}
 
 	// If Reddit is down return 503 error

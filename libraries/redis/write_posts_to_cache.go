@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"context"
 	"encoding/json"
 	"math/rand"
 
@@ -25,8 +26,9 @@ func WritePostsToCache(sub string, memes []models.Meme) error {
 		return err
 	}
 
+	ctx := context.Background()
 	// Reset the index counter so round-robin starts from 0 on the new shuffled list
-	Client.Del(sub + indexKeySuffix)
+	Client.Del(ctx, sub+indexKeySuffix)
 
-	return Client.Set(sub, memesBinary, data.CacheExpirationTime).Err()
+	return Client.Set(ctx, sub, memesBinary, data.CacheExpirationTime).Err()
 }

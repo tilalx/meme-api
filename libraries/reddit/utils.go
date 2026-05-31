@@ -1,6 +1,7 @@
 package reddit
 
 import (
+	"context"
 	"encoding/base64"
 	"io"
 	"log/slog"
@@ -23,9 +24,15 @@ func EncodeCredentials() (encodedCredentials string) {
 	return
 }
 
-// MakeGetRequest : Makes a GET Request to Reddit API with Access Token
-func MakeGetRequest(url string) (responseBody []byte, errorCode int) {
-	req, _ := http.NewRequest("GET", url, nil)
+// MakeGetRequest : Makes a GET Request to Reddit API with Access Token.
+// The provided context controls cancellation and deadline.
+func MakeGetRequest(ctx context.Context, url string) (responseBody []byte, errorCode int) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		sentry.CaptureException(err)
+		slog.Error("error creating Reddit API request", "url", url, "error", err)
+		return nil, http.StatusInternalServerError
+	}
 
 	tokenMu.RLock()
 	token := AccessToken

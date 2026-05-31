@@ -38,7 +38,7 @@ func GetOneRandomMeme(c *gin.Context) {
 
 	// If it is not in Cache then get posts from Reddit
 	if memes == nil {
-		freshMemes, res := reddit.GetNPosts(sub, data.RedditPostsLimit, sort)
+		freshMemes, res := reddit.GetNPosts(c.Request.Context(), sub, data.RedditPostsLimit, sort)
 
 		if freshMemes == nil {
 			c.JSON(res.Code, res)

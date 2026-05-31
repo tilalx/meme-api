@@ -7,7 +7,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # Install swag CLI for doc generation
-RUN go install github.com/swaggo/swag/cmd/swag@v1.16.4
+RUN go install github.com/swaggo/swag/cmd/swag@v1.16.6
 
 COPY . .
 

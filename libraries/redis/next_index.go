@@ -1,6 +1,10 @@
 package redis
 
-import "Meme_Api/data"
+import (
+	"context"
+
+	"Meme_Api/data"
+)
 
 const indexKeySuffix = ":idx"
 
@@ -12,14 +16,15 @@ func NextIndex(sub string) int64 {
 		return 0
 	}
 
+	ctx := context.Background()
 	key := sub + indexKeySuffix
-	idx, err := Client.Incr(key).Result()
+	idx, err := Client.Incr(ctx, key).Result()
 	if err != nil {
 		return 0
 	}
 
 	// Keep the index key alive for as long as the post cache.
-	Client.Expire(key, data.CacheExpirationTime)
+	Client.Expire(ctx, key, data.CacheExpirationTime)
 
 	return idx - 1 // return 0-based index before increment
 }
@@ -31,13 +36,14 @@ func NextIndexBy(sub string, n int) int64 {
 		return 0
 	}
 
+	ctx := context.Background()
 	key := sub + indexKeySuffix
-	result, err := Client.IncrBy(key, int64(n)).Result()
+	result, err := Client.IncrBy(ctx, key, int64(n)).Result()
 	if err != nil {
 		return 0
 	}
 
-	Client.Expire(key, data.CacheExpirationTime)
+	Client.Expire(ctx, key, data.CacheExpirationTime)
 
 	return result - int64(n) // 0-based start of this batch
 }

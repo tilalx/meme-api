@@ -1,6 +1,7 @@
 package reddit
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"log/slog"
@@ -23,7 +24,7 @@ func GetAccessToken() (accessToken string) {
 	// Set grant type to client_credentials as POST body
 	payload := strings.NewReader("grant_type=client_credentials")
 
-	req, err := http.NewRequest("POST", url, payload)
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, url, payload)
 
 	if err != nil {
 		sentry.CaptureException(err)

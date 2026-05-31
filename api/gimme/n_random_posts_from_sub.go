@@ -62,7 +62,7 @@ func GetNPostsFromSub(c *gin.Context) {
 	memes := redis.GetPostsFromCache(sub)
 
 	if memes == nil {
-		freshMemes, res := reddit.GetNPosts(sub, data.RedditPostsLimit, sort)
+		freshMemes, res := reddit.GetNPosts(c.Request.Context(), sub, data.RedditPostsLimit, sort)
 
 		if freshMemes == nil {
 			c.JSON(res.Code, res)

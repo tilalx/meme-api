@@ -1,10 +1,11 @@
 package redis
 
 import (
+	"context"
 	"log/slog"
 	"os"
 
-	"github.com/go-redis/redis"
+	"github.com/redis/go-redis/v9"
 )
 
 // Redis : Redis structure with client
@@ -31,8 +32,9 @@ func Init() {
 
 	redisClient := redis.NewClient(options)
 
-	if redisClient.Ping().String() != "ping: PONG" {
-		slog.Warn("unable to reach Redis — running without cache")
+	ctx := context.Background()
+	if err := redisClient.Ping(ctx).Err(); err != nil {
+		slog.Warn("unable to reach Redis — running without cache", "error", err)
 		return
 	}
 

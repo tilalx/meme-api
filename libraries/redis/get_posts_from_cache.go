@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"context"
 	"encoding/json"
 
 	"Meme_Api/models"
@@ -13,7 +14,8 @@ func GetPostsFromCache(sub string) []models.Meme {
 		return nil
 	}
 
-	memesBinary, err := Client.Get(sub).Bytes()
+	ctx := context.Background()
+	memesBinary, err := Client.Get(ctx, sub).Bytes()
 
 	if err != nil {
 		return nil
