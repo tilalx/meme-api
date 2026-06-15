@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"Meme_Api/config"
-	_ "Meme_Api/docs"
 	"Meme_Api/libraries/reddit"
 	"Meme_Api/libraries/redis"
 	"Meme_Api/server"

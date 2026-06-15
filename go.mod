@@ -7,8 +7,7 @@ require (
 	github.com/gin-contrib/cors v1.7.7
 	github.com/gin-gonic/gin v1.12.0
 	github.com/redis/go-redis/v9 v9.20.0
-	github.com/swaggo/files v1.0.1
-	github.com/swaggo/gin-swagger v1.6.1
+	github.com/swaggest/swgui v1.8.8
 	github.com/swaggo/swag v1.16.4
 	golang.org/x/time v0.15.0
 )
@@ -46,6 +45,7 @@ require (
 	github.com/quic-go/quic-go v0.59.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.3.1 // indirect
+	github.com/vearutop/statigz v1.4.0 // indirect
 	go.mongodb.org/mongo-driver/v2 v2.6.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/arch v0.27.0 // indirect
