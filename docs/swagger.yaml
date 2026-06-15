@@ -1,0 +1,248 @@
+basePath: /
+definitions:
+  response.Error:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  response.MultipleMemes:
+    properties:
+      count:
+        type: integer
+      memes:
+        items:
+          $ref: '#/definitions/response.OneMeme'
+        type: array
+    type: object
+  response.OneMeme:
+    properties:
+      author:
+        type: string
+      nsfw:
+        type: boolean
+      postLink:
+        type: string
+      preview:
+        items:
+          type: string
+        type: array
+      spoiler:
+        type: boolean
+      subreddit:
+        type: string
+      title:
+        type: string
+      ups:
+        type: integer
+      url:
+        type: string
+    type: object
+host: meme-api.aelx.de
+info:
+  contact: {}
+  description: A simple, free REST API serving random memes scraped from Reddit.
+  title: Meme API
+  version: 1.0.0
+paths:
+  /gimme:
+    get:
+      description: Returns a single random meme from one of the default subreddits
+        (memes, dankmemes, me_irl).
+      parameters:
+      - default: hot
+        description: Reddit sort method
+        enum:
+        - hot
+        - new
+        - top
+        in: query
+        name: sort
+        type: string
+      - default: true
+        description: Include NSFW posts
+        in: query
+        name: nsfw
+        type: boolean
+      - default: true
+        description: Include spoiler posts
+        in: query
+        name: spoiler
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.OneMeme'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get a random meme
+      tags:
+      - memes
+  /gimme/{count}:
+    get:
+      description: Returns up to 50 random memes from one of the default subreddits.
+      parameters:
+      - description: Number of memes (1–50)
+        in: path
+        name: count
+        required: true
+        type: integer
+      - default: hot
+        description: Reddit sort method
+        enum:
+        - hot
+        - new
+        - top
+        in: query
+        name: sort
+        type: string
+      - default: true
+        description: Include NSFW posts
+        in: query
+        name: nsfw
+        type: boolean
+      - default: true
+        description: Include spoiler posts
+        in: query
+        name: spoiler
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MultipleMemes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get N random memes
+      tags:
+      - memes
+  /gimme/{subreddit}:
+    get:
+      description: Returns a single random meme from the specified subreddit.
+      parameters:
+      - description: Subreddit name (alphanumeric + underscores, max 50 chars)
+        in: path
+        name: subreddit
+        required: true
+        type: string
+      - default: hot
+        description: Reddit sort method
+        enum:
+        - hot
+        - new
+        - top
+        in: query
+        name: sort
+        type: string
+      - default: true
+        description: Include NSFW posts
+        in: query
+        name: nsfw
+        type: boolean
+      - default: true
+        description: Include spoiler posts
+        in: query
+        name: spoiler
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.OneMeme'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get a random meme from a subreddit
+      tags:
+      - memes
+  /gimme/{subreddit}/{count}:
+    get:
+      description: Returns up to 50 random memes from the specified subreddit.
+      parameters:
+      - description: Subreddit name (alphanumeric + underscores, max 50 chars)
+        in: path
+        name: subreddit
+        required: true
+        type: string
+      - description: Number of memes (1–50)
+        in: path
+        name: count
+        required: true
+        type: integer
+      - default: hot
+        description: Reddit sort method
+        enum:
+        - hot
+        - new
+        - top
+        in: query
+        name: sort
+        type: string
+      - default: true
+        description: Include NSFW posts
+        in: query
+        name: nsfw
+        type: boolean
+      - default: true
+        description: Include spoiler posts
+        in: query
+        name: spoiler
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MultipleMemes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get N random memes from a subreddit
+      tags:
+      - memes
+schemes:
+- https
+swagger: "2.0"

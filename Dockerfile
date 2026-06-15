@@ -6,8 +6,8 @@ WORKDIR /src/meme-api
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Install swag CLI for doc generation
-RUN go install github.com/swaggo/swag/cmd/swag@v1.16.6
+# Install swag CLI for doc generation, pinned to the swaggo/swag version in go.mod
+RUN go install github.com/swaggo/swag/cmd/swag@$(go list -m -f '{{.Version}}' github.com/swaggo/swag)
 
 COPY . .
 
