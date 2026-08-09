@@ -6,7 +6,7 @@ require (
 	github.com/getsentry/sentry-go v0.48.0
 	github.com/gin-contrib/cors v1.7.7
 	github.com/gin-gonic/gin v1.12.0
-	github.com/redis/go-redis/v9 v9.21.0
+	github.com/redis/go-redis/v9 v9.22.0
 	github.com/swaggest/swgui v1.8.9
 	github.com/swaggo/swag v1.16.6
 	golang.org/x/time v0.15.0
