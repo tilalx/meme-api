@@ -9,7 +9,7 @@ require (
 	github.com/redis/go-redis/v9 v9.22.0
 	github.com/swaggest/swgui v1.8.9
 	github.com/swaggo/swag v1.16.6
-	golang.org/x/time v0.15.0
+	golang.org/x/time v0.16.0
 )
 
 require (
